@@ -3,107 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduPay | Dirección de Finanzas UCT</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>CryptoPredict ML Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-    <div class="dashboard-layout">
-        <aside class="sidebar">
-            <div class="brand">
-                <i class="ph ph-bank brand-icon"></i>
-                <div class="brand-text">
-                    <h1>PAGOS UCT</h1>
-                    <span>Dirección de Finanzas UCT</span>
-                </div>
-            </div>
-            
-            <button class="btn-action" style="color: #cbd5e1; border-color: rgba(255,255,255,0.2); margin-top: -10px; margin-bottom: 10px;" onclick="cerrarSesion()">
-                <i class="ph ph-sign-out"></i> Cerrar Sesión
-            </button>
-            
-            <div class="sidebar-module">
-                <h2>Motor Analítico</h2>
-                <button class="btn-primary" onclick="ejecutarAnalisis()">
-                    <i class="ph ph-cpu"></i> Ejecutar Análisis 
-                </button>
-            </div>
-
-            <div class="sidebar-module">
-                <h2>Balance General</h2>
-                <div class="chart-container">
-                    <canvas id="financeChart"></canvas>
-                </div>
-                <div class="total-records">Total registros: <span id="dataCount">0</span></div>
-            </div>
-
-            <button class="btn-outline" id="btnRetrain" onclick="iniciarOptimizacion()" style="display: none; margin-top: auto;">
-                <i class="ph ph-arrows-clockwise"></i> Optimizar Algoritmo
-            </button>
-        </aside>
-
-        <main class="main-content">
-            <header class="topbar">
-                <h2 class="section-title">Registro de Aranceles</h2>
-                <form class="entry-form" id="dataForm">
-                    <input type="text" id="nombre" required placeholder="Nombre del Estudiante">
-                    <select id="mes" required>
-                        <option value="" disabled selected>Periodo Académico</option>
-                        <option value="Marzo">Marzo (Matrícula)</option>
-                        <option value="Abril">Abril</option>
-                        <option value="Mayo">Mayo</option>
-                        <option value="Junio">Junio</option>
-                        <option value="Julio">Julio (Cierre)</option>
-                    </select>
-                    <input type="number" id="monto" required placeholder="Monto ($)">
-                    <select id="estado">
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="Pagado">Pagado</option>
-                    </select>
-                    <button type="submit" class="btn-icon"><i class="ph ph-plus"></i></button>
-                </form>
-            </header>
-
-            <section class="data-section">
-                
-                <div class="table-controls">
-                    <div class="search-box">
-                        <i class="ph ph-magnifying-glass"></i>
-                        <input type="text" id="searchInput" placeholder="Consultar estudiante por nombre o ID...">
-                    </div>
-                </div>
-
-                <table class="elegant-table">
-                    <thead>
-                        <tr>
-                            <th>Estudiante</th>
-                            <th>Monto / Periodo</th>
-                            <th>Estado Actual</th>
-                            <th>Proyección de Riesgo</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        </tbody>
-                </table>
-            </section>
-        </main>
-    </div>
-
-    <div class="modal-overlay" id="processingModal">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3>Optimizando Sistema Predictivo</h3>
-            </div>
-            <div class="modal-body" id="modalLog">
-                </div>
+    <aside class="sidebar">
+        <div class="logo">
+            <span>✨</span> CryptoPredict
         </div>
-    </div>
+        <ul class="nav-links">
+            <li class="nav-item active">Dashboard</li>
+            <li class="nav-item">Mercados</li>
+            <li class="nav-item">Portfolio</li>
+            <li class="nav-item">Ajustes</li>
+        </ul>
+        <div style="margin-top: auto;">
+            <div class="nav-item">Soporte</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <h1>Panel de Control</h1>
+            <input type="text" class="search-bar" placeholder="Buscar criptomoneda...">
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card" id="card-bitcoin">
+                <h3>Bitcoin (BTC)</h3>
+                <div class="stat-value" id="price-btc">Cargando...</div>
+                <div class="trend" id="trend-btc">--</div>
+            </div>
+            <div class="stat-card" id="card-ethereum">
+                <h3>Ethereum (ETH)</h3>
+                <div class="stat-value" id="price-eth">Cargando...</div>
+                <div class="trend" id="trend-eth">--</div>
+            </div>
+            <div class="stat-card" id="card-solana">
+                <h3>Solana (SOL)</h3>
+                <div class="stat-value" id="price-sol">Cargando...</div>
+                <div class="trend" id="trend-sol">--</div>
+            </div>
+        </section>
+
+        <section class="chart-container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h2>Análisis de Mercado (7d)</h2>
+                <select id="crypto-selector" style="background: var(--card-bg); color: white; border: 1px solid var(--glass-border); padding: 0.5rem; border-radius: 8px;">
+                    <option value="bitcoin">Bitcoin</option>
+                    <option value="ethereum">Ethereum</option>
+                    <option value="solana">Solana</option>
+                </select>
+            </div>
+            <canvas id="mainChart"></canvas>
+        </section>
+
+        <section class="prediction-panel">
+            <h2>Predicción de Inteligencia Artificial</h2>
+            <p>Nuestro modelo analiza los últimos 7 días de datos para sugerir la mejor inversión.</p>
+            <button class="predict-btn" id="predictBtn">Realizar Predicción</button>
+            <div class="prediction-result" id="predictionResult"></div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>
