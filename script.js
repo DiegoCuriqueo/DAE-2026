@@ -127,52 +127,56 @@ async function initChart(id) {
 
 // Prediction Logic
 async function predictInvestment() {
-    console.log('Predicting investment...');
+    console.log('Predicting investment via FastAPI...');
     const btn = document.getElementById('predictBtn');
     const resultEl = document.getElementById('predictionResult');
     
     if (!btn || !resultEl) return;
 
     btn.disabled = true;
-    btn.innerText = 'Analizando mercado...';
+    btn.innerText = 'Consultando IA en Python...';
     resultEl.classList.remove('visible');
 
-    // Simulate ML processing time
-    await new Promise(r => setTimeout(r, 1500));
-
     try {
-        // Ensure we have data for all
+        // Ensure we have data for all cryptos
+        const cryptoPayload = [];
         for (const id of cryptos) {
             if (!historicalData[id]) {
                 console.log(`Missing data for ${id}, fetching now...`);
                 await fetchHistoricalData(id);
             }
+            cryptoPayload.push({
+                id: id,
+                prices: historicalData[id]
+            });
         }
 
-        const trends = cryptos.map(id => ({
-            id: id,
-            slope: calculateTrend(historicalData[id]),
-            lastPrice: historicalData[id][historicalData[id].length - 1]
-        }));
-
-        const best = trends.reduce((prev, current) => {
-            const prevGrowth = prev.slope / prev.lastPrice;
-            const currentGrowth = current.slope / current.lastPrice;
-            return (currentGrowth > prevGrowth) ? current : prev;
+        // Send data to FastAPI
+        const response = await fetch('/predict_best', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cryptos: cryptoPayload })
         });
 
-        const name = best.id.charAt(0).toUpperCase() + best.id.slice(1);
-        resultEl.innerHTML = `🚀 Recomendación: Invertir en <strong style="color: var(--success)">${name}</strong>. <br> <span style="font-size: 0.9rem; color: var(--text-secondary)">Nuestro modelo detecta una tendencia de crecimiento superior en comparación con el resto del mercado.</span>`;
+        if (!response.ok) throw new Error('Error en la respuesta del servidor');
+
+        const data = await response.json();
+        const best = data.best;
+
+        resultEl.innerHTML = `🚀 Recomendación: Invertir en <strong style="color: var(--success)">${best.name}</strong>. <br> <span style="font-size: 0.9rem; color: var(--text-secondary)">Nuestro modelo avanzado en Python (Scikit-Learn) detecta una proyección de crecimiento superior (${(best.growth * 100).toFixed(4)}% relativo).</span>`;
         resultEl.classList.add('visible');
     } catch (err) {
         console.error('Prediction error:', err);
-        resultEl.innerText = 'Error al realizar la predicción. Intente de nuevo.';
+        resultEl.innerText = 'Error al conectar con el servidor de Python. Asegúrese de que main.py esté corriendo.';
         resultEl.classList.add('visible');
     } finally {
         btn.disabled = false;
         btn.innerText = 'Realizar Predicción';
     }
 }
+
 
 // Event Listeners
 const selector = document.getElementById('crypto-selector');
