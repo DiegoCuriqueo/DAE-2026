@@ -7,7 +7,7 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel, Field, field_validator
 
 from sklearn.linear_model import LinearRegression
@@ -278,10 +278,26 @@ async def global_exception_handler(request, exc):
     )
 
 
-# --- SERVIR FRONTEND ---
-app.mount("/", StaticFiles(directory=".", html=True), name="static")
+# --- SERVIR FRONTEND REACT ---
+import os
+
+FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "frontend", "dist")
+
+if os.path.isdir(FRONTEND_DIR):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
+
+    @app.get("/{full_path:path}", tags=["Frontend"])
+    async def serve_spa(full_path: str):
+        """Serve React SPA - catch all routes for client-side routing."""
+        file_path = os.path.join(FRONTEND_DIR, full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
+else:
+    # Fallback: serve legacy frontend
+    app.mount("/", StaticFiles(directory=".", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
-    logger.info("🚀 Iniciando Servidor Quantum Hub v3.0...")
+    logger.info("🚀 Iniciando Servidor Quantum Hub v4.0...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
