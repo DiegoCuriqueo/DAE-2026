@@ -36,7 +36,7 @@ export default function Layout({ children, health, searchQuery, onSearch }) {
         {children}
         <footer className="footer">
           <div className="footer-left">
-            <strong>Quantum Hub</strong> v4.0 © 2026 — Powered by React + FastAPI
+            <strong>BitFlow</strong> v4.0 © 2026 
           </div>
           <div className="footer-right">
             <a href="/docs" className="footer-link" target="_blank" rel="noreferrer">API Docs</a>

@@ -21,10 +21,9 @@ export default function Sidebar({ open, health }) {
   return (
     <aside className={`sidebar ${open ? 'open' : ''}`}>
       <div className="sidebar-header">
-        <div className="logo-icon">Q</div>
+        <img src="logo.png" alt="Logo" className="logo-icon" />
         <div>
-          <div className="logo-text">QUANTUM HUB</div>
-          <span className="logo-version">v4.0 React</span>
+          <div className="logo-text">BitFlow</div>
         </div>
       </div>
 

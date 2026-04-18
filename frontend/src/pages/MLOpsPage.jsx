@@ -22,9 +22,9 @@ export default function MLOpsPage({ crypto, addActivity }) {
       >
         <div className="ai-panel-header">
           <div className="ai-panel-title">
-            <span>🤖</span> AI Prediction Engine
+            <span>🤖</span> AI Predicción de Criptomonedas
           </div>
-          <span className="ai-panel-subtitle">Motor de predicción basado en Regresión Lineal con sklearn</span>
+          <span className="ai-panel-subtitle">Motor de predicción basado en Regresión Lineal</span>
         </div>
         <div className="ai-panel-body">
           <CryptoChart
