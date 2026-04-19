@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 
-export default function Layout({ children, health, searchQuery, onSearch }) {
+export default function Layout({ children, health, searchQuery, onSearch, isSimulating, toggleSimulation }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -32,7 +32,12 @@ export default function Layout({ children, health, searchQuery, onSearch }) {
       <Sidebar open={sidebarOpen} health={health} />
 
       <main className="main-content">
-        <Header searchQuery={searchQuery} onSearch={onSearch} />
+        <Header 
+          searchQuery={searchQuery} 
+          onSearch={onSearch} 
+          isSimulating={isSimulating}
+          toggleSimulation={toggleSimulation}
+        />
         {children}
         <footer className="footer">
           <div className="footer-left">

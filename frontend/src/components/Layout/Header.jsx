@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 
-export default function Header({ searchQuery, onSearch }) {
+export default function Header({ searchQuery, onSearch, isSimulating, toggleSimulation }) {
   const [clock, setClock] = useState('');
 
   useEffect(() => {
@@ -34,6 +34,27 @@ export default function Header({ searchQuery, onSearch }) {
             id="global-search"
           />
         </div>
+        <button 
+          onClick={toggleSimulation}
+          style={{
+            padding: '0.4rem 0.8rem',
+            borderRadius: '6px',
+            border: isSimulating ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.1)',
+            background: isSimulating ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)',
+            color: isSimulating ? '#10b981' : '#94a3b8',
+            fontSize: '13px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            transition: 'all 0.2s',
+            animation: isSimulating ? 'pulse 2s infinite' : 'none'
+          }}
+          title={isSimulating ? "Detener Simulador" : "Iniciar Simulador Automático"}
+        >
+          {isSimulating ? <><span style={{fontSize:'14px'}}>⚡</span> Simulando...</> : <><span style={{fontSize:'14px'}}>🚀</span> Simulador</>}
+        </button>
         <div className="header-clock">{clock}</div>
         <div className="avatar" title="Administrador">A</div>
       </div>

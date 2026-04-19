@@ -294,8 +294,12 @@ if os.path.isdir(FRONTEND_DIR):
             return FileResponse(file_path)
         return FileResponse(os.path.join(FRONTEND_DIR, "index.html"))
 else:
-    # Fallback: serve legacy frontend
-    app.mount("/", StaticFiles(directory=".", html=True), name="static")
+    @app.get("/{full_path:path}", tags=["Frontend"])
+    async def frontend_not_found(full_path: str):
+        return JSONResponse(
+            status_code=404,
+            content={"detail": "Frontend de React no encontrado. Ejecuta 'npm run build' en la carpeta 'frontend' para compilarlo."}
+        )
 
 if __name__ == "__main__":
     import uvicorn
