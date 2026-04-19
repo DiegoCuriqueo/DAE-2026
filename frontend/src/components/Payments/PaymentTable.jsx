@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, Download, Plus, Search, FileSpreadsheet } from 'lucide-react';
 
-export default function PaymentTable({ payments, loading, searchQuery, onToggle, onDelete, onOpenModal }) {
+export default function PaymentTable({ payments, loading, searchQuery, onToggle, onDelete, onOpenModal, onClearAll }) {
   const [localSearch, setLocalSearch] = useState('');
 
   const query = searchQuery || localSearch;
@@ -12,6 +12,7 @@ export default function PaymentTable({ payments, loading, searchQuery, onToggle,
     const q = query.toLowerCase();
     return payments.filter(p =>
       p.client.toLowerCase().includes(q) ||
+      (p.service && p.service.toLowerCase().includes(q)) ||
       p.amount.toString().includes(q) ||
       p.id.includes(q) ||
       p.status.includes(q)
@@ -22,10 +23,10 @@ export default function PaymentTable({ payments, loading, searchQuery, onToggle,
 
   const exportCSV = () => {
     if (filtered.length === 0) return;
-    let csv = 'Cliente,Monto,Estado,Fecha,ID\n';
+    let csv = 'Cliente,Servicio,Monto,Estado,Fecha,ID\n';
     filtered.forEach(p => {
       const date = new Date(p.created_at).toLocaleDateString('es-CL');
-      csv += `"${p.client}","$${p.amount}","${p.status}","${date}","${p.id}"\n`;
+      csv += `"${p.client}","${p.service || 'General'}","$${p.amount}","${p.status}","${date}","${p.id}"\n`;
     });
     const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -63,6 +64,10 @@ export default function PaymentTable({ payments, loading, searchQuery, onToggle,
             <FileSpreadsheet size={14} />
             CSV
           </button>
+          <button className="btn btn-secondary" onClick={onClearAll} title="Limpiar Base de Datos" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+            <Trash2 size={14} />
+            Limpiar BD
+          </button>
           <button className="btn btn-primary" onClick={onOpenModal}>
             <Plus size={14} />
             Nuevo Pago
@@ -75,6 +80,7 @@ export default function PaymentTable({ payments, loading, searchQuery, onToggle,
           <thead>
             <tr>
               <th>Cliente</th>
+              <th>Servicio</th>
               <th>Monto</th>
               <th>Estado</th>
               <th>Fecha</th>
@@ -93,7 +99,7 @@ export default function PaymentTable({ payments, loading, searchQuery, onToggle,
               ))
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan="6">
+                <td colSpan="7">
                   <div className="empty-state">
                     <div className="empty-state-icon">📋</div>
                     <p>{payments.length === 0 ? 'No hay pagos registrados. ¡Crea el primero!' : 'No hay resultados para tu búsqueda.'}</p>
@@ -117,6 +123,7 @@ export default function PaymentTable({ payments, loading, searchQuery, onToggle,
                       transition={{ duration: 0.25 }}
                     >
                       <td className="td-client">{p.client}</td>
+                      <td className="td-service" style={{ color: '#94a3b8', fontSize: '13px' }}>{p.service || 'General'}</td>
                       <td className="td-amount">${p.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                       <td>
                         <span

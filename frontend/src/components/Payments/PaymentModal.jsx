@@ -4,6 +4,7 @@ import { X, Check, User, DollarSign } from 'lucide-react';
 
 export default function PaymentModal({ isOpen, onClose, onSave }) {
   const [client, setClient] = useState('');
+  const [service, setService] = useState('General');
   const [amount, setAmount] = useState('');
   const [status, setStatus] = useState('pendiente');
   const [errors, setErrors] = useState({});
@@ -23,10 +24,12 @@ export default function PaymentModal({ isOpen, onClose, onSave }) {
     try {
       await onSave({
         client: client.trim(),
+        service,
         amount: parseFloat(amount),
         status,
       });
       setClient('');
+      setService('General');
       setAmount('');
       setStatus('pendiente');
       setErrors({});
@@ -104,6 +107,26 @@ export default function PaymentModal({ isOpen, onClose, onSave }) {
                 onKeyDown={handleKeyDown}
               />
               {errors.amount && <div className="form-error visible">Ingresa un monto válido mayor a 0</div>}
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="payment-service">Servicio</label>
+              <select
+                className="form-select"
+                id="payment-service"
+                value={service}
+                onChange={(e) => setService(e.target.value)}
+              >
+                <option value="General">General</option>
+                <option value="Auditoría Ciberseguridad">Auditoría Ciberseguridad</option>
+                <option value="Consultoría MLOps">Consultoría MLOps</option>
+                <option value="Desarrollo Backend">Desarrollo Backend</option>
+                <option value="Optimización Cloud">Optimización Cloud</option>
+                <option value="Implementación IA">Implementación IA</option>
+                <option value="Análisis de Datos">Análisis de Datos</option>
+                <option value="Soporte Técnico 24/7">Soporte Técnico 24/7</option>
+                <option value="Diseño UI/UX Premium">Diseño UI/UX Premium</option>
+              </select>
             </div>
 
             <div className="form-group">

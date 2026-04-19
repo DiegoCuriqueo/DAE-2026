@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchPayments, createPayment, togglePayment, deletePayment } from '../api/api';
+import { fetchPayments, createPayment, togglePayment, deletePayment, deleteAllPayments } from '../api/api';
 
 export function usePayments() {
   const [payments, setPayments] = useState([]);
@@ -38,6 +38,11 @@ export function usePayments() {
     setPayments(prev => prev.filter(p => p.id !== id));
   };
 
+  const removeAll = async () => {
+    await deleteAllPayments();
+    setPayments([]);
+  };
+
   const total = payments.reduce((s, p) => s + p.amount, 0);
   const paidCount = payments.filter(p => p.status === 'pagado').length;
   const pendingCount = payments.filter(p => p.status === 'pendiente').length;
@@ -46,7 +51,7 @@ export function usePayments() {
 
   return {
     payments, loading, error, reload: load,
-    add, toggle, remove,
+    add, toggle, remove, removeAll,
     stats: {
       total: payments.length,
       totalAmount: total,

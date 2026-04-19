@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import PaymentTable from '../components/Payments/PaymentTable';
 import PaymentModal from '../components/Payments/PaymentModal';
 import ConfirmModal from '../components/Payments/ConfirmModal';
+import ClearAllModal from '../components/Payments/ClearAllModal';
 
 const pageVariants = {
   initial: { opacity: 0, y: 12 },
@@ -14,6 +15,7 @@ const pageVariants = {
 export default function PaymentsPage({ paymentHook, searchQuery, addActivity }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [clearAllOpen, setClearAllOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState({ id: null, client: '' });
 
   const handleSave = async (payment) => {
@@ -57,6 +59,18 @@ export default function PaymentsPage({ paymentHook, searchQuery, addActivity }) 
     }
   };
 
+  const handleClearAllConfirm = async () => {
+    try {
+      await paymentHook.removeAll();
+      toast.success('Base de datos limpiada correctamente', { icon: '🧹' });
+      addActivity('deleted', `<strong>Base de datos reseteada</strong> (Todos los pagos eliminados)`);
+    } catch {
+      toast.error('Error al limpiar la base de datos');
+    } finally {
+      setClearAllOpen(false);
+    }
+  };
+
   return (
     <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit">
       <PaymentTable
@@ -66,6 +80,7 @@ export default function PaymentsPage({ paymentHook, searchQuery, addActivity }) 
         onToggle={handleToggle}
         onDelete={handleDeleteRequest}
         onOpenModal={() => setModalOpen(true)}
+        onClearAll={() => setClearAllOpen(true)}
       />
 
       <PaymentModal
@@ -79,6 +94,12 @@ export default function PaymentsPage({ paymentHook, searchQuery, addActivity }) 
         client={deleteTarget.client}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setConfirmOpen(false)}
+      />
+
+      <ClearAllModal
+        isOpen={clearAllOpen}
+        onConfirm={handleClearAllConfirm}
+        onCancel={() => setClearAllOpen(false)}
       />
     </motion.div>
   );

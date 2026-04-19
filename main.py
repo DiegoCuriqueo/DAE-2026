@@ -37,6 +37,7 @@ class PaymentModel(Base):
     __tablename__ = "payments"
     id = Column(String, primary_key=True, index=True)
     client = Column(String, nullable=False)
+    service = Column(String, nullable=False, default="General")
     amount = Column(Float, nullable=False)
     status = Column(String, default="pendiente")
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -48,6 +49,7 @@ Base.metadata.create_all(bind=engine)
 # --- ESQUEMAS DE VALIDACIÓN (Pydantic) ---
 class PaymentBase(BaseModel):
     client: str
+    service: str = "General"
     amount: float
     status: Optional[str] = "pendiente"
 
@@ -187,6 +189,7 @@ def create_payment(payment: PaymentBase, db: Session = Depends(get_db)):
     new_payment = PaymentModel(
         id=str(uuid.uuid4())[:8],
         client=payment.client,
+        service=payment.service,
         amount=payment.amount,
         status=payment.status
     )
@@ -210,6 +213,15 @@ def toggle_payment(payment_id: str, db: Session = Depends(get_db)):
     db.refresh(db_payment)
     logger.info(f"🔄 Pago {payment_id} cambiado: {old_status} → {db_payment.status}")
     return db_payment
+
+
+@app.delete("/api/payments/all", status_code=200, tags=["Finanzas"])
+def delete_all_payments(db: Session = Depends(get_db)):
+    """Elimina todos los pagos de la base de datos."""
+    num_deleted = db.query(PaymentModel).delete()
+    db.commit()
+    logger.info(f"🗑️ Base de datos limpiada. Pagos eliminados: {num_deleted}")
+    return {"message": "Todos los pagos eliminados correctamente", "deleted_count": num_deleted}
 
 
 @app.delete("/api/payments/{payment_id}", status_code=200, tags=["Finanzas"])

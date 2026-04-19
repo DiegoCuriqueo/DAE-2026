@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import StatCards from '../components/Dashboard/StatCards';
 import CryptoCards from '../components/Dashboard/CryptoCards';
 import DonutChart from '../components/Analytics/DonutChart';
+import ServiceChart from '../components/Analytics/ServiceChart';
 import ActivityFeed from '../components/Dashboard/ActivityFeed';
 
 const pageVariants = {
@@ -20,6 +21,9 @@ export default function DashboardPage({ paymentHook, crypto, activities }) {
           paidCount={paymentHook.stats.paidCount}
           pendingCount={paymentHook.stats.pendingCount}
         />
+        <ServiceChart payments={paymentHook.payments} />
+      </div>
+      <div style={{ marginTop: '1.5rem' }}>
         <ActivityFeed activities={activities} />
       </div>
     </motion.div>

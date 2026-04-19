@@ -46,6 +46,12 @@ export async function deletePayment(id) {
   return res.json();
 }
 
+export async function deleteAllPayments() {
+  const res = await fetch(`${API_BASE}/payments/all`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Delete all payments failed');
+  return res.json();
+}
+
 // --- Crypto Prices ---
 export async function fetchLivePrices() {
   const res = await fetch(
